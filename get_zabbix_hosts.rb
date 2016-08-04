@@ -1,11 +1,13 @@
-require 'rake'
-require 'rspec/core/rake_task'
-require 'json'
-require 'net/http'
+#!/bin/env ruby
 
-ZABBIX_URL = "http://172.31.2.116/zabbix/api_jsonrpc.php"
-ZABBIX_USER = "Admin"
-ZABBIX_PASSWORD = "zabbix"
+require 'net/http'
+require 'json'
+require 'optparse'
+
+options = ARGV.getopts("", "url:http://172.31.2.116/zabbix/api_jsonrpc.php", "username:Admin", "password:zabbix")
+ZABBIX_URL = options["url"]
+ZABBIX_USER = options["username"]
+ZABBIX_PASSWORD = options["password"]
 
 ZABBIX_URI = URI.parse(ZABBIX_URL)
 ZABBIX_API_HEADER = {'Content-Type' =>'application/json-rpc'}
@@ -13,7 +15,6 @@ API_REQUEST_BASE = Net::HTTP::Post.new(ZABBIX_URI.request_uri, initheader = ZABB
 api_connection = nil
 # api_connection is user.login returned value.
 # {"jsonrpc"=>"2.0", "result"=>"099adde3cea983cece7c0f03195791eb", "id"=>1}
-
 
 def login
   params = {user: ZABBIX_USER, password: ZABBIX_PASSWORD}
@@ -73,24 +74,5 @@ hosts["result"].each do |h|
   result << host
 end
 
-hosts = JSON.dump(result)
+puts JSON.dump(result)
 
-
-task :spec    => 'spec:all'
-task :default => :spec
-
-namespace :spec do
-  hosts = JSON.load(File.new('hosts.json'))
-  p hosts
-  task :all     => hosts.map {|h| h['name'] }
-  task :default => :all
-
-  hosts.each do |host|
-    name = host['name']
-    desc "Run serverspec tests to #{name}"
-    RSpec::Core::RakeTask.new(name) do |t|
-      ENV['TARGET_HOST'] = name
-      t.pattern = "spec/{#{host['roles'].join(',')}}/*_spec.rb"
-    end
-  end
-end
