@@ -36,7 +36,6 @@ end
 
 def get_host_list(api_connection)
   params = {output: "extend", selectGroups: "true", selectInterfaces: "extend"}
-
   API_REQUEST_BASE.body = {method: "host.get", auth: api_connection["result"], params: params, id: 2, jsonrpc: "2.0"}.to_json
 
   return api_access(ZABBIX_URI, API_REQUEST_BASE)
@@ -55,24 +54,57 @@ result = []
 
 api_connection = login()
 hosts = get_host_list(api_connection)
-
+#puts JSON.dump(hosts)
+#exit
 
 hosts["result"].each do |h|
   host = {}
-  h["interfaces"].each do |interface|
-    if interface["useip"] == "1" then
-      host = {:name => interface["ip"]}
-    else
-      host = {:name => interface["dns"]}
-    end
+  h.each{|i|
+    #puts JSON.dump(i)
+    #p "###############################"
+    #p i["host"]
+    #host = {:name => i["host"]}
+    host = {:name => h["host"]}
+    #puts JSON.dump(host)
+    #puts hosts["host"] 
     break
-  end
+  }
+#puts JSON.dump(host)
   groups = get_hostgroup_list(api_connection, h["groups"].map!{|group| group.values}.flatten)
   group_names = groups["result"].map {|group| group["name"]}
   host[:roles] = group_names
 
   result << host
 end
-
 puts JSON.dump(result)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

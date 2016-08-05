@@ -58,14 +58,23 @@ hosts = get_host_list(api_connection)
 
 hosts["result"].each do |h|
   host = {}
-  h["interfaces"].each do |interface|
-    if interface["useip"] == "1" then
-      host = {:name => interface["ip"]}
-    else
-      host = {:name => interface["dns"]}
-    end
+#  h["interfaces"].each do |interface|
+#    if interface["useip"] == "1" then
+#      host = {:name => interface["ip"]}
+#    else
+#      host = {:name => interface["dns"]}
+#    end
+#    break
+#  end
+
+
+#管理しているサーバのIPアドレスが欲しいのではなくIPアドレスが欲しいので以下に書き換え
+#ZabbixのエージェントのインターフェースがDNS名ではなくIPアドレス（Zabbixサーバから見たアドレス）がデフォルトの設定
+  h.each{|i|
+    host = {:name => h["host"]}
     break
-  end
+  }
+#変更はここまで
   groups = get_hostgroup_list(api_connection, h["groups"].map!{|group| group.values}.flatten)
   group_names = groups["result"].map {|group| group["name"]}
   host[:roles] = group_names
@@ -74,8 +83,11 @@ hosts["result"].each do |h|
 end
 
 hosts = JSON.dump(result)
-
-
+#ファイルへ出力
+out_file = open("hosts.json","w")
+out_file.puts(hosts)
+out_file.close
+#ファイル出力完了
 task :spec    => 'spec:all'
 task :default => :spec
 
@@ -90,7 +102,10 @@ namespace :spec do
     desc "Run serverspec tests to #{name}"
     RSpec::Core::RakeTask.new(name) do |t|
       ENV['TARGET_HOST'] = name
-      t.pattern = "spec/{#{host['roles'].join(',')}}/*_spec.rb"
+#ディレクトリ構成に応じてここを修正する
+#対象サーバの環境とロールは判っているので"ロールとしての共通のテストディレクトリ"と"各環境毎の差異があるテストディレクトリ"
+#      t.pattern = "spec/{#{host['roles'].join(',')}}/*_spec.rb"
+       t.pattern = "spec/{#{host['roles'].join(',')}}/**/*_spec.rb"
     end
   end
 end
