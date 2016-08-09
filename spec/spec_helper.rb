@@ -17,7 +17,13 @@ end
 
 host = ENV['TARGET_HOST']
 
-options = Net::SSH::Config.for(host)
+#options = Net::SSH::Config.for(host)
+options = {
+  paranoid: false,
+  user_known_hosts_file: '/dev/null',
+}
+Net::SSH::Config.for(host)
+
 
 options[:user] ||= Etc.getlogin
 

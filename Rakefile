@@ -3,7 +3,7 @@ require 'rspec/core/rake_task'
 require 'json'
 require 'net/http'
 
-ZABBIX_URL = "http://172.31.2.116/zabbix/api_jsonrpc.php"
+ZABBIX_URL = "http://192.168.0.162/zabbix/api_jsonrpc.php"
 ZABBIX_USER = "Admin"
 ZABBIX_PASSWORD = "zabbix"
 
