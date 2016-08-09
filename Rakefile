@@ -102,6 +102,9 @@ namespace :spec do
     desc "Run serverspec tests to #{name}"
     RSpec::Core::RakeTask.new(name) do |t|
       ENV['TARGET_HOST'] = name
+        if ENV['CI_FLAG']
+           t.rspec_opts = "--format RspecJunitFormatter --out report/serverspec/results_#{host[:name]}.xml"
+        end
 #ディレクトリ構成に応じてここを修正する
 #対象サーバの環境とロールは判っているので"ロールとしての共通のテストディレクトリ"と"各環境毎の差異があるテストディレクトリ"
 #      t.pattern = "spec/{#{host['roles'].join(',')}}/*_spec.rb"
