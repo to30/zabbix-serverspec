@@ -22,12 +22,13 @@ host = ENV['TARGET_HOST']
 options = {
   paranoid: false,
   user_known_hosts_file: '/dev/null',
-  keys: '/tmp/id_rsa'
+  keys: '/tmp/id_rsa',
+  user: ansible
 }
 Net::SSH::Config.for(host)
 
 
-options[:user] ||= Etc.getlogin
+#options[:user] ||= Etc.getlogin
 
 set :host,        options[:host_name] || host
 set :ssh_options, options
