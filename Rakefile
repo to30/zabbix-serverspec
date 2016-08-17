@@ -107,8 +107,12 @@ namespace :spec do
         end
 #ディレクトリ構成に応じてここを修正する
 #対象サーバの環境とロールは判っているので"ロールとしての共通のテストディレクトリ"と"各環境毎の差異があるテストディレクトリ"
+#ここで{#{host['roles'].join(',')}}に入るものを再構築する必要がある既にbaseは追加済み
+       print "############################\n"
+       print "#{host['roles'].join(' ')}\n"
+       print "############################\n"
 #      t.pattern = "spec/{#{host['roles'].join(',')}}/*_spec.rb"
-       t.pattern = "spec/{#{host['roles'].join(',')}}/**/*_spec.rb"
+       t.pattern = "spec/{base,#{host['roles'].join(',')}}/**/*_spec.rb"
 #       print "############################\n"
 #       print "#{host['roles'].join(',')}\n"
 #       print "############################\n"
