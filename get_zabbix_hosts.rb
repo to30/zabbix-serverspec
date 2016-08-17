@@ -4,7 +4,7 @@ require 'net/http'
 require 'json'
 require 'optparse'
 
-options = ARGV.getopts("", "url:http://172.31.2.116/zabbix/api_jsonrpc.php", "username:Admin", "password:zabbix")
+options = ARGV.getopts("", "url:http://192.168.0.162/zabbix/api_jsonrpc.php", "username:Admin", "password:zabbix")
 ZABBIX_URL = options["url"]
 ZABBIX_USER = options["username"]
 ZABBIX_PASSWORD = options["password"]

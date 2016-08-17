@@ -17,10 +17,12 @@ end
 
 host = ENV['TARGET_HOST']
 
+#options[:keys] = ENV['KEY'];
 #options = Net::SSH::Config.for(host)
 options = {
   paranoid: false,
   user_known_hosts_file: '/dev/null',
+  keys: '/home/ansible/.ssh/id_rsa'
 }
 Net::SSH::Config.for(host)
 

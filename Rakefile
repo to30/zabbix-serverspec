@@ -109,6 +109,9 @@ namespace :spec do
 #対象サーバの環境とロールは判っているので"ロールとしての共通のテストディレクトリ"と"各環境毎の差異があるテストディレクトリ"
 #      t.pattern = "spec/{#{host['roles'].join(',')}}/*_spec.rb"
        t.pattern = "spec/{#{host['roles'].join(',')}}/**/*_spec.rb"
+#       print "############################\n"
+#       print "#{host['roles'].join(',')}\n"
+#       print "############################\n"
     end
   end
 end
