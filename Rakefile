@@ -108,14 +108,28 @@ namespace :spec do
 #ディレクトリ構成に応じてここを修正する
 #対象サーバの環境とロールは判っているので"ロールとしての共通のテストディレクトリ"と"各環境毎の差異があるテストディレクトリ"
 #ここで{#{host['roles'].join(',')}}に入るものを再構築する必要がある既にbaseは追加済み
-       print "############################\n"
-       print "#{host['roles'].join(' ')}\n"
-       print "############################\n"
-#      t.pattern = "spec/{#{host['roles'].join(',')}}/*_spec.rb"
-       t.pattern = "spec/{base,#{host['roles'].join(',')}}/**/*_spec.rb"
+#もし配列の中にwebがあったらみたいな分岐
 #       print "############################\n"
-#       print "#{host['roles'].join(',')}\n"
+#       print "#{host['roles']}\n"  #配列の表示
 #       print "############################\n"
+       #kekka = #{host['roles']}.grep(/[a-z]/)
+       #p host['roles'].include?("staging-app")  #正規表現使用不可 true false を返すのでこっちがいい
+       #kekka = host['roles'].grep(/.*app/)      #正規表現使用可
+       #p host['roles'].grep(/.*app/).none?      #これは逆
+       #p host['roles'].grep(/.*app/).any?        #これが正解
+       #kekka = "abc"
+       #p kekka
+#       print "############################\n"
+       if host['roles'].grep(/.*app/).any?
+         print "APPフォルダを含めた処理\n"
+         t.pattern = "spec/{base,app,environment/#{host['roles'].join(',')}}/**/*_spec.rb"
+       end
+       if host['roles'].grep(/.*web/).any?
+         print "WEBフォルダを含めた処理\n"
+         t.pattern = "spec/{base,web,environment/#{host['roles'].join(',')}}/**/*_spec.rb"
+       end
+###############################################################
+#       t.pattern = "spec/{base,#{host['roles'].join(',')}}/**/*_spec.rb"
     end
   end
 end

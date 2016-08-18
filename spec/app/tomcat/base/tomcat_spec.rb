@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe 'web共通テスト1' do 
+describe 'APP共通tomcat/baseの下用テスト1' do 
   describe port(22) do
     it { should be_listening }
   end
 end
 
-describe 'web共通テスト2' do
+describe 'APP共通tomcat/baseの下用テスト2' do
   describe port(22) do
     it { should be_listening }
   end
