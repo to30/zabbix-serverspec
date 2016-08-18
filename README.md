@@ -1,7 +1,7 @@
 # Zabbixからテスト対象のホスト情報を動的に取得する
 
 zabbixのAPI（host.get）を使ってその時点でどのサーバがどのホストグループ(roles)
-に属しているかという情報を取得する。これにより新規サーバやロール変更・追加などによるテスト漏れ  
+に属しているかという情報を取得する。これにより新規サーバやロール変更・追加などによるテスト漏れを防ぐ  
 
 ```
 cat hosts.json |jq .
@@ -73,8 +73,7 @@ spec
 ```
 
 
-##CI_FLAG=true を付けることでテスト結果をJUnit形式で保存
-rake spec:c7red CI_FLAG=true
+CI_FLAG=true を付けることでテスト結果をJUnit形式で保存  
 ### Jenkinsでテスト結果を可視化（その1）  
 ![フィルタ1](images/kekka.JPG)  
 
