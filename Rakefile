@@ -120,13 +120,15 @@ namespace :spec do
        #kekka = "abc"
        #p kekka
 #       print "############################\n"
-       if host['roles'].grep(/.*app/).any?
+       if host['roles'].grep(/.*app/).any? then
          print "APPフォルダを含めた処理\n"
-         t.pattern = "spec/{base,app,environment/#{host['roles'].join(',')}}/**/*_spec.rb"
-       end
-       if host['roles'].grep(/.*web/).any?
+         t.pattern = "spec/{base,app,environment/#{host['roles'].join(',environment/')}}/**/*_spec.rb"
+       elsif host['roles'].grep(/.*web/).any? then
          print "WEBフォルダを含めた処理\n"
-         t.pattern = "spec/{base,web,environment/#{host['roles'].join(',')}}/**/*_spec.rb"
+         t.pattern = "spec/{base,web,environment/#{host['roles'].join(',environment/')}}/**/*_spec.rb"
+       else
+         print "テストの用意されていないロール\n"
+         exit
        end
 ###############################################################
 #       t.pattern = "spec/{base,#{host['roles'].join(',')}}/**/*_spec.rb"

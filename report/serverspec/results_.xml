@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="rspec" tests="4" failures="0" errors="0" time="0.265094" timestamp="2016-08-09T20:15:50+09:00">
-  <!-- Randomized with seed 31091 -->
-  <properties/>
-  <testcase classname="spec.production-web.httpd.httpd_spec" name="Port &quot;22&quot; should be listening" file="./spec/production-web/httpd/httpd_spec.rb" time="0.209480"/>
-  <testcase classname="spec.production-web.httpd.httpd_spec" name="Port &quot;22&quot; should be listening" file="./spec/production-web/httpd/httpd_spec.rb" time="0.017420"/>
-  <testcase classname="spec.production-web.httpd_spec" name="Port &quot;22&quot; should be listening" file="./spec/production-web/httpd_spec.rb" time="0.018423"/>
-  <testcase classname="spec.production-web.httpd_spec" name="Port &quot;22&quot; should be listening" file="./spec/production-web/httpd_spec.rb" time="0.018646"/>
-</testsuite>
