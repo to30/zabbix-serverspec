@@ -72,8 +72,19 @@ spec
     `-- sample_spec.rb
 ```
 
+このディレクトリ構成により先程の"proapp01.vmtest.com"は  
+spec/base/base_spec.rb  
+  
+spec/app/tomcat_spec.rb  
+spec/app/tomcat/tomcat_spec.rb  
+spec/app/tomcat/base/tomcat_spec.rb  
+  
+spec/environment/production-app/tomcat_spec.rb  
+spec/environment/production-app/tomcat/tomcat_spec.rb  
+spec/environment/production-app/tomcat/base/tomcat_spec.rb  
+がテスト対象となる  
 
-CI_FLAG=true を付けることでテスト結果をJUnit形式で保存  
+
 ### Jenkinsでテスト結果を可視化（その1）  
 ![フィルタ1](images/kekka.JPG)  
 
@@ -82,8 +93,9 @@ CI_FLAG=true を付けることでテスト結果をJUnit形式で保存
 
 ### Jenkinsでテスト結果を可視化（その3）  
 ![フィルタ1](images/kekka3.JPG)  
-
-テスト可能なサーバのリストを出す     
+CI_FLAG=true を付けることでテスト結果をJUnit形式で保存  
+  
+テスト可能なサーバのリストを出す  
 [centos@ip-172-31-7-21 serverspec]$ rake -T  
 rake spec:ansible.vmtest.local   # Run serverspec tests to ansible.vmtest.local  
 rake spec:c7red                  # Run serverspec tests to c7red  
