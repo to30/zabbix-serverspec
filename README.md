@@ -1,22 +1,95 @@
 # Zabbixからテスト対象のホスト情報を動的に取得する
 
-##CI_FLAG=true を付けることでテスト結果をJUnit形式で保存  
-rake spec:c7red CI_FLAG=true  
+zabbixのAPI（host.get）を使ってその時点でどのサーバがどのホストグループ(roles)
+に属しているかという情報を取得する。これにより新規サーバやロール変更・追加などによるテスト漏れ  
+
+```
+cat hosts.json |jq .
+[
+  {
+    "name": "proapp01.vmtest.com",
+    "roles": [
+      "Discovered hosts",
+      "production-app"
+    ]
+  },
+  {
+    "name": "proapp02.vmtest.local",
+    "roles": [
+      "Discovered hosts",
+      "production-app"
+    ]
+  },
+  {
+    "name": "staapp01.vmtest.local",
+    "roles": [
+      "Discovered hosts",
+      "staging-app"
+    ]
+  }
+]
+```
+上記の例では、  
+"proapp01.vmtest.com"は  
+"Discovered hosts"  
+"production-app"  
+というロールに属しているのでそれに対応したテストが実行される。
+
+# specファイルのディレクトリ構成  
+specファイルは"spec"ディレクトリ下に配置される  
+例えば「22番ポートは開いている」といった全てのサーバ共通設定に関するテスト内容は"base"ディレクトリ  
+APPサーバ共通の設定内容に関するテスト内容は"APP"ディレクトリ  
+APPサーバでも環境に依存した設定内容がある場合は、  
+"environment"ディレクトリ下に例えば"production-app"の様な”ロール名”フォルダに配置する。  
+```
+今日のデモ環境のディレクトリ構成は以下の通り
+spec
+|-- app
+|   |-- tomcat
+|   |   |-- base
+|   |   |   `-- tomcat_spec.rb
+|   |   `-- tomcat_spec.rb
+|   `-- tomcat_spec.rb
+|-- base
+|   `-- base_spec.rb
+|-- environment
+|   |-- production-app
+|   |   |-- tomcat
+|   |   |   |-- base
+|   |   |   |   `-- tomcat_spec.rb
+|   |   |   `-- tomcat_spec.rb
+|   |   `-- tomcat_spec.rb
+|   `-- production-web
+|       |-- httpd
+|       |   `-- httpd_spec.rb
+|       `-- httpd_spec.rb
+|-- spec_helper.rb
+|-- web
+|   |-- httpd
+|   |   `-- httpd_spec.rb
+|   `-- httpd_spec.rb
+`-- zabbix
+    `-- sample_spec.rb
+```
 
 
+##CI_FLAG=true を付けることでテスト結果をJUnit形式で保存
+rake spec:c7red CI_FLAG=true
+### Jenkinsでテスト結果を可視化（その1）  
+![フィルタ1](images/kekka.JPG)  
+
+### Jenkinsでテスト結果を可視化（その2）  
+![フィルタ1](images/kekka2.JPG)  
+
+### Jenkinsでテスト結果を可視化（その3）  
+![フィルタ1](images/kekka3.JPG)  
+
+テスト可能なサーバのリストを出す     
 [centos@ip-172-31-7-21 serverspec]$ rake -T  
-[{"name"=>"zabbix", "roles"=>["Zabbix servers"]}, {"name"=>"pa1", "roles"=>["production-app"]}, {"name"=>"pa2", "roles"=>["production-app"]}, {"name"=>"pd1", "roles"=>["production-db"]}, {"name"=>"pd2", "roles"=>["production-db"]}, {"name"=>"pw1", "roles"=>["production-web"]}, {"name"=>"pw2", "roles"=>["production-web"]}, {"name"=>"sa1", "roles"=>["staging-app"]}, {"name"=>"sa2", "roles"=>["staging-app"]}, {"name"=>"sd1", "roles"=>["staging-db"]}, {"name"=>"sd2", "roles"=>["staging-db"]}, {"name"=>"sw1", "roles"=>["staging-web"]}, {"name"=>"sw2", "roles"=>["staging-web"]}]  
-rake spec:pa1     # Run serverspec tests to pa1  
-rake spec:pa2     # Run serverspec tests to pa2  
-rake spec:pd1     # Run serverspec tests to pd1  
-rake spec:pd2     # Run serverspec tests to pd2  
-rake spec:pw1     # Run serverspec tests to pw1  
-rake spec:pw2     # Run serverspec tests to pw2  
-rake spec:sa1     # Run serverspec tests to sa1  
-rake spec:sa2     # Run serverspec tests to sa2  
-rake spec:sd1     # Run serverspec tests to sd1  
-rake spec:sd2     # Run serverspec tests to sd2  
-rake spec:sw1     # Run serverspec tests to sw1  
-rake spec:sw2     # Run serverspec tests to sw2  
-rake spec:zabbix  # Run serverspec tests to zabbix  
-
+rake spec:ansible.vmtest.local   # Run serverspec tests to ansible.vmtest.local  
+rake spec:c7red                  # Run serverspec tests to c7red  
+rake spec:jenkins.vmtest.local   # Run serverspec tests to jenkins.vmtest.local  
+rake spec:proapp01.vmtest.com    # Run serverspec tests to proapp01.vmtest.com  
+rake spec:proapp02.vmtest.local  # Run serverspec tests to proapp02.vmtest.local  
+rake spec:staapp01.vmtest.local  # Run serverspec tests to staapp01.vmtest.local  
+rake spec:zabbix01               # Run serverspec tests to zabbix01  

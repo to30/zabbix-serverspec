@@ -93,7 +93,7 @@ task :default => :spec
 
 namespace :spec do
   hosts = JSON.load(File.new('hosts.json'))
-  p hosts
+  #p hosts
   task :all     => hosts.map {|h| h['name'] }
   task :default => :all
 
@@ -121,14 +121,14 @@ namespace :spec do
        #p kekka
 #       print "############################\n"
        if host['roles'].grep(/.*app/).any? then
-         print "APPフォルダを含めた処理\n"
+         #print "APPフォルダを含めた処理\n"
          t.pattern = "spec/{base,app,environment/#{host['roles'].join(',environment/')}}/**/*_spec.rb"
        elsif host['roles'].grep(/.*web/).any? then
-         print "WEBフォルダを含めた処理\n"
+         #print "WEBフォルダを含めた処理\n"
          t.pattern = "spec/{base,web,environment/#{host['roles'].join(',environment/')}}/**/*_spec.rb"
        else
          print "テストの用意されていないロール\n"
-         exit
+         #exit
        end
 ###############################################################
 #       t.pattern = "spec/{base,#{host['roles'].join(',')}}/**/*_spec.rb"
