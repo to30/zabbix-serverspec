@@ -1,8 +1,11 @@
 require 'serverspec'
 require 'net/ssh'
+require 'infrataster/rspec'
 
 set :backend, :ssh
 set :request_pty, true
+
+
 
 if ENV['ASK_SUDO_PASSWORD']
   begin
@@ -41,3 +44,28 @@ set :ssh_options, options
 
 # Set PATH
 # set :path, '/sbin:/usr/local/sbin:$PATH'
+
+
+Infrataster::Server.define(
+  :rc4,
+  '192.168.0.0/24',
+  ssh: {host_name: host, user: 'ansible', keys: '/tmp/id_rsa'}
+)
+
+
+RSpec.configure do |config|
+  config.expect_with :rspec do |expectations|
+    expectations.include_chain_clauses_in_custom_matcher_descriptions = true
+  end
+
+  config.mock_with :rspec do |mocks|
+    mocks.verify_partial_doubles = true
+  end
+end
+
+
+
+
+
+
+

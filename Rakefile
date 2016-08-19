@@ -58,23 +58,10 @@ hosts = get_host_list(api_connection)
 
 hosts["result"].each do |h|
   host = {}
-#  h["interfaces"].each do |interface|
-#    if interface["useip"] == "1" then
-#      host = {:name => interface["ip"]}
-#    else
-#      host = {:name => interface["dns"]}
-#    end
-#    break
-#  end
-
-
-#管理しているサーバのIPアドレスが欲しいのではなくIPアドレスが欲しいので以下に書き換え
-#ZabbixのエージェントのインターフェースがDNS名ではなくIPアドレス（Zabbixサーバから見たアドレス）がデフォルトの設定
   h.each{|i|
     host = {:name => h["host"]}
     break
   }
-#変更はここまで
   groups = get_hostgroup_list(api_connection, h["groups"].map!{|group| group.values}.flatten)
   group_names = groups["result"].map {|group| group["name"]}
   host[:roles] = group_names
@@ -87,7 +74,6 @@ hosts = JSON.dump(result)
 out_file = open("hosts.json","w")
 out_file.puts(hosts)
 out_file.close
-#ファイル出力完了
 task :spec    => 'spec:all'
 task :default => :spec
 
@@ -105,33 +91,20 @@ namespace :spec do
         if ENV['CI_FLAG']
            t.rspec_opts = "--format RspecJunitFormatter --out report/serverspec/results_#{host[:name]}.xml"
         end
-#ディレクトリ構成に応じてここを修正する
-#対象サーバの環境とロールは判っているので"ロールとしての共通のテストディレクトリ"と"各環境毎の差異があるテストディレクトリ"
-#ここで{#{host['roles'].join(',')}}に入るものを再構築する必要がある既にbaseは追加済み
-#もし配列の中にwebがあったらみたいな分岐
-#       print "############################\n"
-#       print "#{host['roles']}\n"  #配列の表示
-#       print "############################\n"
-       #kekka = #{host['roles']}.grep(/[a-z]/)
-       #p host['roles'].include?("staging-app")  #正規表現使用不可 true false を返すのでこっちがいい
-       #kekka = host['roles'].grep(/.*app/)      #正規表現使用可
-       #p host['roles'].grep(/.*app/).none?      #これは逆
-       #p host['roles'].grep(/.*app/).any?        #これが正解
-       #kekka = "abc"
-       #p kekka
-#       print "############################\n"
+       #ロールに応じて適宜修正
        if host['roles'].grep(/.*app/).any? then
          #print "APPフォルダを含めた処理\n"
          t.pattern = "spec/{base,app,environment/#{host['roles'].join(',environment/')}}/**/*_spec.rb"
        elsif host['roles'].grep(/.*web/).any? then
          #print "WEBフォルダを含めた処理\n"
          t.pattern = "spec/{base,web,environment/#{host['roles'].join(',environment/')}}/**/*_spec.rb"
+       elsif host['roles'].grep(/.*rc4/).any? then
+         #print "WEBフォルダを含めた処理\n"
+         t.pattern = "spec/{base,web,environment/#{host['roles'].join(',environment/')}}/**/*_spec.rb"
        else
          print "テストの用意されていないロール\n"
-         #exit
+         exit
        end
-###############################################################
-#       t.pattern = "spec/{base,#{host['roles'].join(',')}}/**/*_spec.rb"
     end
   end
 end
