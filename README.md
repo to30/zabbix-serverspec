@@ -104,3 +104,18 @@ rake spec:proapp01.vmtest.com    # Run serverspec tests to proapp01.vmtest.com
 rake spec:proapp02.vmtest.local  # Run serverspec tests to proapp02.vmtest.local  
 rake spec:staapp01.vmtest.local  # Run serverspec tests to staapp01.vmtest.local  
 rake spec:zabbix01               # Run serverspec tests to zabbix01  
+
+###振る舞いテストと障害注入テスト（Fault Injection Test）について  
+Infratasterを入れているのでサーバの外部からの振る舞い（サービス内容）をテストできます。  
+又、以下のようにテストの前にサービスを止め　　
+（下記では監視の仕組みがまだないので再起動にしていますが）てからテストを実施することで  
+障害が発生してもサービスを継続できる信頼性の高いシステムかどうかを確認できます。  
+before do  
+  current_server.ssh_exec("sudo /sbin/service glassfish restart;sleep 300;")  
+end  
+it "responds content including 'jenkins'" do  
+  expect(response.body).to include('jenkins')  
+end  
+
+
+
